@@ -1,9 +1,11 @@
 # Project Structure Overview
 
 ## Summary
+
 This repository is a Java-based command-line Task Manager application built with Gradle. It follows standard Gradle/Java conventions and uses a package namespace under `za.co.wethinkcode.taskmanager`.
 
 ## Key Configuration Files
+
 - `build.gradle.kts` - Gradle build script written in Kotlin DSL.
 - `settings.gradle.kts` - Gradle settings file defining the root project.
 - `gradlew` / `gradlew.bat` - Gradle wrapper scripts for Unix and Windows.
@@ -12,6 +14,7 @@ This repository is a Java-based command-line Task Manager application built with
 - `tasks.json` - Application data storage file used at runtime to persist tasks.
 
 ## Technology Stack
+
 - Java
 - Gradle (build tool)
 - Apache Commons CLI (`commons-cli`) for parsing command-line arguments
@@ -23,6 +26,7 @@ This repository is a Java-based command-line Task Manager application built with
 ## Main Project Folders
 
 ### `src/main/java/za/co/wethinkcode/taskmanager/`
+
 This is the primary source code area.
 
 - `app/`
@@ -46,11 +50,14 @@ This is the primary source code area.
   - Typically used for text parsing, merging, or formatting logic.
 
 ### `src/test/java/za/co/wethinkcode/taskmanager/`
+
 Contains unit tests for the application logic and utility helpers.
+
 - `app/` - Tests for core task manager behavior.
 - `util/` - Tests for helper classes.
 
 ## Application Entry Points
+
 - `src/main/java/za/co/wethinkcode/taskmanager/cli/TaskManagerCli.java`
   - This class contains `public static void main(String[] args)`.
   - It is configured as the main class in `build.gradle.kts`.
@@ -58,6 +65,7 @@ Contains unit tests for the application logic and utility helpers.
   - This is the central application service for task operations.
 
 ## How the Application Runs
+
 - Build: `./gradlew build`
 - Run: `./gradlew run --args="<command>"`
 - Example commands:
@@ -68,6 +76,7 @@ Contains unit tests for the application logic and utility helpers.
   - `delete <task_id>`
 
 ## Recommended Exploration Exercise
+
 1. Open `TaskManagerCli.java` and identify how command arguments are parsed.
 2. Open `TaskManager.java` and trace the flow of one command, such as `create` or `list`.
 3. Run the app with a sample command:
@@ -76,6 +85,7 @@ Contains unit tests for the application logic and utility helpers.
 4. Inspect `tasks.json` after running commands to verify how task data is saved.
 
 ## Notes
+
 - The project does not use Maven or a database.
 - Task state and persistence are managed through a JSON file rather than a relational storage system.
 - The package path follows a Java reverse-domain naming style: `za.co.wethinkcode.taskmanager`.
