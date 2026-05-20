@@ -17,6 +17,7 @@ To run the project:
 ```
 
 Available commands:
+
 - `create <title> [description] [priority] [due_date] [tags]` - Create a new task
 - `list [-s <status>] [-p <priority>] [-o]` - List tasks
 - `status <task_id> <new_status>` - Update task status
@@ -27,10 +28,21 @@ Available commands:
 - `show <task_id>` - Show task details
 - `delete <task_id>` - Delete task
 - `stats` - Show task statistics
+- `export [filename]` - Export tasks to CSV (default `tasks.csv`)
 
 Examples:
+
 ```bash
-./gradlew run --args="create 'Fix Code' 'I need to get this running' 1 2025-06-01 bugs"
+
+
+./gradlew run --args="list"
+
+# Export tasks to CSV next to tasks.json
+./gradlew run --args="export tasks.csv"
+```
+
+```bash
+
 
 ./gradlew run --args="list"
 ```
