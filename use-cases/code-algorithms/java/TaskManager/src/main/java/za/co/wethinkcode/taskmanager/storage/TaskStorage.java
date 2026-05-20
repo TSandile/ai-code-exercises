@@ -9,6 +9,7 @@ import za.co.wethinkcode.taskmanager.model.TaskStatus;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
@@ -111,6 +112,64 @@ public class TaskStorage {
         return tasks.values().stream()
                 .filter(Task::isOverdue)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Export tasks to a CSV file placed in the same directory as the JSON storage
+     * file.
+     * 
+     * @param csvFileName file name to create (e.g. "tasks.csv")
+     * @return true on success, false on error
+     */
+    public boolean exportToCsv(String csvFileName) {
+        File storageFile = new File(storagePath);
+        File parentDir = storageFile.getAbsoluteFile().getParentFile();
+        File csvFile = parentDir != null ? new File(parentDir, csvFileName) : new File(csvFileName);
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(csvFile))) {
+            // Header
+            pw.println("id,title,description,priority,status,dueDate,tags,createdAt,updatedAt,completedAt");
+
+            for (Task t : tasks.values()) {
+                String tags = String.join(";", t.getTags());
+                String due = t.getDueDate() != null ? t.getDueDate().toString() : "";
+                String completed = t.getCompletedAt() != null ? t.getCompletedAt().toString() : "";
+
+                pw.print(csvEscape(t.getId()));
+                pw.print(',');
+                pw.print(csvEscape(t.getTitle()));
+                pw.print(',');
+                pw.print(csvEscape(t.getDescription()));
+                pw.print(',');
+                pw.print(t.getPriority() != null ? t.getPriority().getValue() : "");
+                pw.print(',');
+                pw.print(t.getStatus() != null ? t.getStatus().getValue() : "");
+                pw.print(',');
+                pw.print(csvEscape(due));
+                pw.print(',');
+                pw.print(csvEscape(tags));
+                pw.print(',');
+                pw.print(csvEscape(t.getCreatedAt().toString()));
+                pw.print(',');
+                pw.print(csvEscape(t.getUpdatedAt().toString()));
+                pw.print(',');
+                pw.println(csvEscape(completed));
+            }
+
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error exporting tasks to CSV: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Helper to escape CSV fields by wrapping in quotes and doubling internal
+    // quotes
+    private String csvEscape(String s) {
+        if (s == null)
+            return "";
+        String escaped = s.replace("\"", "\"\"");
+        return "\"" + escaped + "\"";
     }
 
     // Custom serializer for LocalDateTime
