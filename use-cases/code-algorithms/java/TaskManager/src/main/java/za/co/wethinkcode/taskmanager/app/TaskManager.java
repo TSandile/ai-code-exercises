@@ -176,4 +176,14 @@ public class TaskManager {
 
         return stats;
     }
+
+    /**
+     * Export tasks to CSV using the underlying storage implementation.
+     * @param csvFileName file name to create next to the JSON storage file
+     * @return true on success
+     */
+    public boolean exportToCsv(String csvFileName) {
+        return getStorage().exportToCsv(csvFileName);
+    }
 }
+
