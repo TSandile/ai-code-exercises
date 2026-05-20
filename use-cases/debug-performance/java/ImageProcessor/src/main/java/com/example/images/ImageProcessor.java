@@ -3,12 +3,9 @@ package com.example.images;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 public class ImageProcessor {
@@ -34,11 +31,11 @@ public class ImageProcessor {
         }
     }
 
-    public static void multiplyImages(String inputFolder, String outputFolder, int multiplicationFactor) throws IOException {
+    public static void multiplyImages(String inputFolder, String outputFolder, int multiplicationFactor)
+            throws IOException {
         File folder = new File(inputFolder);
-        File[] imageFiles = folder.listFiles((dir, name) ->
-                name.toLowerCase().endsWith(".jpg") ||
-                        name.toLowerCase().endsWith(".png"));
+        File[] imageFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".jpg") ||
+                name.toLowerCase().endsWith(".png"));
 
         if (imageFiles == null || imageFiles.length == 0) {
             System.out.println("No images found in the folder");
@@ -96,8 +93,7 @@ public class ImageProcessor {
         printMemoryStats.accept("START", runtime);
 
         File folder = new File(inputFolder);
-        File[] imageFiles = folder.listFiles((dir, name) ->
-                name.toLowerCase().endsWith(".jpg") ||
+        File[] imageFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".jpg") ||
                 name.toLowerCase().endsWith(".png"));
 
         if (imageFiles == null || imageFiles.length == 0) {
@@ -111,37 +107,25 @@ public class ImageProcessor {
             outputDir.mkdirs();
         }
 
-        // Store all images in memory first
-        List<BufferedImage> images = new ArrayList<>();
-        System.out.println("Loading all images into memory...");
+        System.out.println("Processing images one by one to reduce memory usage...");
 
         for (File imageFile : imageFiles) {
-            BufferedImage image = ImageIO.read(imageFile);
-            images.add(image);
-            System.out.println("Loaded: " + imageFile.getName());
-        }
+            System.out.println("Reading: " + imageFile.getName());
+            BufferedImage original = ImageIO.read(imageFile);
 
-        // Print memory usage after loading
-        printMemoryStats.accept("AFTER LOADING", runtime);
+            if (original == null) {
+                System.err.println("Warning: could not read image " + imageFile.getName());
+                continue;
+            }
 
-        // Process all images
-        System.out.println("Processing all images...");
-        List<BufferedImage> processedImages = new ArrayList<>();
-
-        for (BufferedImage image : images) {
-            BufferedImage processed = applyEffects(image);
-            processedImages.add(processed);
-        }
-
-        // Print memory usage after processing
-        printMemoryStats.accept("AFTER PROCESSING", runtime);
-
-        // Save all processed images
-        System.out.println("Saving all processed images...");
-        for (int i = 0; i < imageFiles.length; i++) {
-            String outputName = outputFolder + File.separator + "processed_" + imageFiles[i].getName();
-            ImageIO.write(processedImages.get(i), getImageFormat(imageFiles[i].getName()), new File(outputName));
+            BufferedImage processed = applyEffects(original);
+            String outputName = outputFolder + File.separator + "processed_" + imageFile.getName();
+            ImageIO.write(processed, getImageFormat(imageFile.getName()), new File(outputName));
             System.out.println("Saved: " + outputName);
+
+            // Drop references so GC can reclaim pixel memory sooner
+            original = null;
+            processed = null;
         }
 
         // Print final memory usage
