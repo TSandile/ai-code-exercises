@@ -172,18 +172,89 @@ public class TaskStorage {
         return "\"" + escaped + "\"";
     }
 
-    // Custom serializer for LocalDateTime
+    /**
+     * JSON serializer for {@link java.time.LocalDateTime}.
+     *
+     * <p>Converts a {@code LocalDateTime} instance into a JSON string using the
+     * {@link java.time.format.DateTimeFormatter#ISO_LOCAL_DATE_TIME} format.
+     * This class is registered with Gson so date/time fields on {@code Task}
+     * objects are written as ISO-8601 formatted strings (for example
+     * {@code 2026-05-20T15:30:00}).</p>
+     *
+     * <h3>Example</h3>
+     * <pre>
+     * Gson gson = new GsonBuilder()
+     *     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeSerializer())
+     *     .create();
+     * String json = gson.toJson(localDateTimeInstance);
+     * </pre>
+     *
+     * <h3>Notes</h3>
+     * <ul>
+     *   <li>The serializer uses ISO_LOCAL_DATE_TIME and does not include timezone
+     *   information.</li>
+     *   <li>Gson normally skips null values; this serializer does not handle
+     *   {@code null} explicitly and assumes {@code src} is non-null when called.</li>
+     *   <li>Precision is preserved to the granularity provided by
+     *   {@link LocalDateTime#toString()} formatted by the ISO formatter.</li>
+     * </ul>
+     */
     private static class LocalDateTimeSerializer implements JsonSerializer<LocalDateTime> {
         private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
+        /**
+         * Serialize a {@link LocalDateTime} to a {@link JsonElement}.
+         *
+         * @param src the {@code LocalDateTime} instance to serialize (expected non-null)
+         * @param typeOfSrc the actual type (usually {@code LocalDateTime.class})
+         * @param context serialization context provided by Gson (not used)
+         * @return a {@link JsonElement} containing the ISO-8601 formatted date-time string
+         */
         @Override
         public JsonElement serialize(LocalDateTime src, Type typeOfSrc, JsonSerializationContext context) {
             return new JsonPrimitive(formatter.format(src));
         }
     }
 
-    // Custom deserializer for LocalDateTime
+    /**
+     * JSON deserializer for {@link java.time.LocalDateTime}.
+     *
+     * <p>Parses ISO-8601 date-time strings produced by
+     * {@link LocalDateTimeSerializer} and converts them back into
+     * {@code LocalDateTime} instances using {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}.</p>
+     *
+     * <h3>Example</h3>
+     * <pre>
+     * Gson gson = new GsonBuilder()
+     *     .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeDeserializer())
+     *     .create();
+     * LocalDateTime dt = gson.fromJson("\"2026-05-20T15:30:00\"", LocalDateTime.class);
+     * </pre>
+     *
+     * <h3>Notes &amp; Edge Cases</h3>
+     * <ul>
+     *   <li>If the JSON value is not a valid ISO_LOCAL_DATE_TIME string, a
+     *   {@link com.google.gson.JsonParseException} will be thrown.</li>
+     *   <li>Timezone/offset information is not supported by this parser; strings
+     *   containing offsets (e.g. {@code 2026-05-20T15:30:00Z} or
+     *   {@code 2026-05-20T15:30:00+02:00}) will fail to parse with
+     *   {@link DateTimeFormatter#ISO_LOCAL_DATE_TIME}.</li>
+     *   <li>Null checks: Gson may not call the deserializer for {@code null}
+     *   values; callers should assume the JSON element is non-null.</li>
+     * </ul>
+     */
     private static class LocalDateTimeDeserializer implements JsonDeserializer<LocalDateTime> {
+        /**
+         * Deserialize a {@link JsonElement} containing an ISO-8601 date-time
+         * string into a {@link LocalDateTime}.
+         *
+         * @param json the {@code JsonElement} expected to contain a JSON string
+         *             formatted as ISO-8601 local date-time
+         * @param typeOfT the target type (usually {@code LocalDateTime.class})
+         * @param context deserialization context provided by Gson (not used)
+         * @return the parsed {@link LocalDateTime}
+         * @throws JsonParseException if the JSON is not a valid ISO_LOCAL_DATE_TIME string
+         */
         @Override
         public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
