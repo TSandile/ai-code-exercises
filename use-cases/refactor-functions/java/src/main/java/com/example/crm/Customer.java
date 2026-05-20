@@ -40,7 +40,11 @@ public class Customer {
     }
 
     public void setDataSource(String source) {
-        this.dataSource = dataSource;
+        this.dataSource = source;
+    }
+
+    public String getDataSource() {
+        return dataSource;
     }
 
     public void setCreatedAt(Date createdAt) {
