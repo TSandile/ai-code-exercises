@@ -73,9 +73,12 @@ public class TaskManagerCli {
             case "stats":
                 handleStatsCommand();
                 break;
+            case "export":
+                handleExportCommand(args);
+                break;
             default:
                 System.err.println("Unknown command: " + command);
-                System.err.println("Available commands: create, list, status, priority, due, tag, untag, show, delete, stats");
+                System.err.println("Available commands: create, list, status, priority, due, tag, untag, show, delete, stats, export");
         }
     }
 
@@ -261,6 +264,16 @@ public class TaskManagerCli {
         System.out.println("Completed in last 7 days: " + stats.get("completedLastWeek"));
     }
 
+    private static void handleExportCommand(String[] args) {
+        String filename = (args != null && args.length > 0 && args[0] != null && !args[0].isEmpty()) ? args[0] : "tasks.csv";
+        boolean ok = taskManager.exportToCsv(filename);
+        if (ok) {
+            System.out.println("Exported tasks to: " + filename);
+        } else {
+            System.out.println("Failed to export tasks to CSV.");
+        }
+    }
+
     private static void showHelp(HelpFormatter formatter, Options options) {
         System.out.println("Task Manager CLI");
         System.out.println("Available commands:");
@@ -274,6 +287,7 @@ public class TaskManagerCli {
         System.out.println("  show <task_id> - Show task details");
         System.out.println("  delete <task_id> - Delete a task");
         System.out.println("  stats - Show task statistics");
+        System.out.println("  export [filename] - Export tasks to CSV (default: tasks.csv)");
     }
 
     private static String formatTask(Task task) {
