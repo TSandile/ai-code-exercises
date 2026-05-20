@@ -1,31 +1,37 @@
 package com.example.crm;
 
-import java.util.concurrent.locks.StampedLock;
-
 public class CustomerProcessingOptions {
     private final boolean performDeduplication;
     private final int maxErrorCount;
     private final boolean duplicatesAreErrors;
-    private final DefaultValidator customValidator;
+    private final CustomerValidator customValidator;
     private final boolean saveToDatabase;
     private final boolean includeRecordsInResponse;
     private final boolean includeValidRecords;
     private final boolean includeInvalidRecords;
     private final boolean includeDuplicateRecords;
 
-
     public CustomerProcessingOptions() {
-        this(true, 3, false, new DefaultValidator(), true, true, true, false, false);
+        this(true,
+                3,
+                false,
+                new DefaultValidator(),
+                true,
+                true,
+                true,
+                false,
+                false);
     }
+
     public CustomerProcessingOptions(boolean performDeduplication,
-                                     int maxErrorCount,
-                                     boolean duplicatesAreErrors,
-                                     DefaultValidator customValidator,
-                                     boolean saveToDatabase,
-                                     boolean includeRecordsInResponse,
-                                     boolean includeValidRecords,
-                                     boolean includeInvalidRecords,
-                                     boolean includeDuplicateRecords) {
+            int maxErrorCount,
+            boolean duplicatesAreErrors,
+            CustomerValidator customValidator,
+            boolean saveToDatabase,
+            boolean includeRecordsInResponse,
+            boolean includeValidRecords,
+            boolean includeInvalidRecords,
+            boolean includeDuplicateRecords) {
         this.performDeduplication = performDeduplication;
         this.maxErrorCount = maxErrorCount;
         this.duplicatesAreErrors = duplicatesAreErrors;
@@ -49,8 +55,7 @@ public class CustomerProcessingOptions {
         return duplicatesAreErrors;
     }
 
-
-    public DefaultValidator getCustomValidator() {
+    public CustomerValidator getCustomValidator() {
         return customValidator;
     }
 

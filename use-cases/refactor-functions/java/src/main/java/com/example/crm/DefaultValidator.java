@@ -2,11 +2,10 @@ package com.example.crm;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-public class DefaultValidator {
-    public List<String> validate(Map<String, Object> processedRecord) {
-        //implementation omitted
+public class DefaultValidator implements CustomerValidator {
+    @Override
+    public List<String> validate(CustomerRecord customerRecord) {
         return Collections.emptyList();
     }
 }

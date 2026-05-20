@@ -1,13 +1,14 @@
 package com.example.crm;
 
-import java.util.Date;
+import java.time.Instant;
+import java.util.Objects;
 
 public class Customer {
     private String name;
     private String email;
     private String phoneNumber;
     private String dataSource;
-    private Date createdAt;
+    private Instant createdAt;
 
     public Customer(String name, String email, String phoneNumber) {
         this.name = name;
@@ -39,19 +40,37 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setDataSource(String source) {
-        this.dataSource = source;
-    }
-
     public String getDataSource() {
         return dataSource;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setDataSource(String source) {
+        this.dataSource = source;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Customer)) {
+            return false;
+        }
+        Customer customer = (Customer) o;
+        return Objects.equals(email, customer.email)
+                && Objects.equals(phoneNumber, customer.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, phoneNumber);
     }
 }
