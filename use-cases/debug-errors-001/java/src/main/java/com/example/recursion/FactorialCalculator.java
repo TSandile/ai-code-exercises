@@ -11,7 +11,7 @@ package com.example.recursion;
  * 5! = 5 × 4 × 3 × 2 × 1 = 120
  */
 public class FactorialCalculator {
-    
+
     /**
      * Main method to demonstrate the factorial calculation.
      */
@@ -28,6 +28,11 @@ public class FactorialCalculator {
      */
     public static int calculateFactorial(int num) {
         // Missing base case or incorrect recursive call
+        if (num < 0) {
+            throw new IllegalArgumentException("Negative Input not Permitted");
+        } else if (num <= 1) {
+            return 1;
+        }
         // This will cause infinite recursion
         return num * calculateFactorial(num - 1);
     }
